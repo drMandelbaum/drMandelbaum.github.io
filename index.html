@@ -252,7 +252,7 @@
         showLoading();
         try {
             await submitMessage(message)
-            document.getElementById("send_button").value = ""
+            document.getElementById("text_input").value = ""
         }
         catch(error) {
         } finally {
