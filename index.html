@@ -17,25 +17,40 @@
             text-decoration: none;
             color: white;
         }
+        a:hover {
+            background-color: yellow;
+            color: midnightblue;
+        }
         input {
             font-size:16px;
             font-family: monospace;
             padding: 4px;
+            border-top-style: hidden;
+            border-right-style: hidden;
+            border-left-style: hidden;
+            border-bottom-style: hidden;
+        }
+        input:focus {
+            outline: none;
         }
         button {
             font-size:16px;
             font-family: monospace;
             padding: 4px;
-            margin-top: 16px;
-            margin-left: 8px;
         }
         #messages {
             margin-top: 8px;
             background: midnightblue;
             min-height: 190px;
-            color: mediumspringgreen;
+            color: lime;
             font-weight: lighter;
 
+        }
+        #my_address {
+            display: inline-flex;
+            background: midnightblue;
+            padding: 4px;
+            color: white;
         }
         .loader {
             width:500px;
@@ -98,6 +113,7 @@
     <div class="loaderBar"></div>
 </div>
 <div id="messages"></div>
+<div id="my_address"></div>
 <input type="text" id="text_input" size="50">
 <button type="button" id="send_button" onclick="sendMessage()">send</button>
 
@@ -198,8 +214,19 @@
     async function load() {
         await loadWeb3()
         await loadContract()
+        await loadMyAddress()
         await loadMessages()
         await listenEnterKey()
+    }
+
+    async function loadMyAddress() {
+        let accounts = await window.web3.eth.getAccounts()
+        let address = accounts[0]
+        let nameLink = document.createElement('a')
+        nameLink.setAttribute('href',"https://ropsten.etherscan.io/address/" + address)
+        nameLink.setAttribute('target',"_blank")
+        nameLink.textContent = address
+        document.getElementById("my_address").appendChild(nameLink)
     }
 
     async function getMessage(index) {
