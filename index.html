@@ -12,6 +12,11 @@
             background: mediumpurple;
             padding: 0px 16px 16px;
         }
+        a {
+            font-weight: bolder;
+            text-decoration: none;
+            color: white;
+        }
         input {
             font-size:16px;
             font-family: monospace;
@@ -266,7 +271,12 @@
             messagesContainer.firstChild.remove()
         }
         messages.forEach(function (message) {
-            messagesContainer.appendChild(document.createTextNode(message.sender + ": " + message.text))
+            let nameLink = document.createElement('a');
+            nameLink.setAttribute('href',"https://ropsten.etherscan.io/address/" + message.sender);
+            nameLink.setAttribute('target',"_blank");
+            nameLink.innerText = message.sender + ": "
+            messagesContainer.appendChild(nameLink)
+            messagesContainer.appendChild(document.createTextNode(message.text))
             messagesContainer.appendChild(document.createElement('br'))
         })
     }
