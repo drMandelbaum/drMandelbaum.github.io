@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BlockChat</title>
+</head>
+
+<body>
+
+<div id="messages" style="font-family: monospace"></div>
+<input type="text" id="text_input">
+<button type="button" id="send_button" onclick="onSendClicked()">send</button>
+
+<script type="text/javascript">
+
+    async function loadWeb3() {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+            window.ethereum.enable();
+        }
+    }
+
+    async function loadContract() {
+        window.contract =  new window.web3.eth.Contract([
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "text",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "sendMessage",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "length",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "messages",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "sender",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "text",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ],
+            '0x63bA453564fCcB91e45319f9620EA552d58cd399'
+        );
+    }
+
+    async function load() {
+        await loadWeb3()
+        await loadContract();
+        await loadMessages()
+    }
+
+    async function getMessage(index) {
+        return await contract.methods.messages(index).call()
+    }
+
+    async function getLastMessages(count) {
+        let length = await contract.methods.length().call()
+        let messages = []
+        for (i = Math.max(0, length - count); i < length; i++) {
+            let message = await getMessage(i)
+            messages.push(message)
+        }
+        return messages
+    }
+
+    function showMessages(messages) {
+        let messagesContainer = document.getElementById("messages")
+        while (messagesContainer.firstChild) {
+            messagesContainer.firstChild.remove()
+        }
+        messages.forEach(function (message) {
+            messagesContainer.appendChild(document.createTextNode(message.sender + " : " + message.text))
+            messagesContainer.appendChild(document.createElement('br'))
+        })
+    }
+
+    async function loadMessages() {
+        let messages = await getLastMessages(5);
+        showMessages(messages)
+        setTimeout(loadMessages, 5000)
+    }
+
+    async function onSendClicked() {
+        let textInput = document.getElementById("text_input")
+        let message = textInput.value
+        await sendMessage(message)
+        textInput.value = ""
+    }
+
+    async function sendMessage(message) {
+        let accounts = await window.web3.eth.getAccounts()
+        await window.contract.methods.sendMessage(message).send({from: accounts[0]})
+    }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js" onload="load()"></script>
+
+</body>
+</html>
