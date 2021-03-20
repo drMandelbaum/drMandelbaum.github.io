@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DataBox</title>
+
+    <style>
+
+    </style>
+
+</head>
+
+<body>
+<div id="images"></div>
+<input type="text" id="key_input" size="50">
+<button type="button" id="send_button" onclick="onLoadClicked()">load</button>
+<br>
+<input type="text" id="data_input" size="50">
+<button type="button" id="save_button" onclick="onSaveClicked()">save</button>
+
+<script type="text/javascript">
+
+    var web3;
+    var contract;
+
+    async function loadWeb3() {
+        web3 = new Web3(window.ethereum);
+        window.ethereum.enable();
+    }
+
+    async function loadContract() {
+        contract =  new web3.eth.Contract([
+                {
+                    "inputs": [],
+                    "name": "finalize",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "key",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "data",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "save",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "dataMap",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "owner",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "data",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ],
+            '0x589C98e28709979AA05E6373803DbE535fdFF026'
+        );
+    }
+
+    async function firstAccount() {
+        let accounts = await window.web3.eth.getAccounts()
+        return accounts[0]
+    }
+
+    async function load() {
+        await loadWeb3()
+        await loadContract()
+        await loadImage("doge")
+    }
+
+    async function loadImage(key) {
+        let result = await contract.methods.dataMap(key).call()
+        let imagesContainer = document.getElementById("images")
+        let image = document.createElement('img')
+        image.setAttribute('src',result.data)
+        imagesContainer.appendChild(image)
+    }
+
+    async function saveData(key, data) {
+        await contract.methods.save(key, data).send({from: await firstAccount()})
+    }
+
+    async function onLoadClicked() {
+        await loadImage(document.getElementById("key_input").value)
+    }
+
+    async function onSaveClicked() {
+        await saveData(
+            document.getElementById("key_input").value,
+            document.getElementById("data_input").value
+        )
+    }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js" onload="load()"></script>
+
+</body>
+</html>

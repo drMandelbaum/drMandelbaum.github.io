@@ -119,18 +119,19 @@
 
 <script type="text/javascript">
 
-    const MESSAGES_MAX_COUNT = 10
+    const MESSAGES_MAX_COUNT = 15
     let messages = []
+    var eth;
+    var chatContract;
+    var boxContract;
 
     async function loadWeb3() {
-        if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum);
-            window.ethereum.enable();
-        }
+        web3 = new Web3(window.ethereum);
+        window.ethereum.enable();
     }
 
     async function loadContract() {
-        window.contract =  new window.web3.eth.Contract([
+        chatContract =  new window.web3.eth.Contract([
                 {
                     "anonymous": false,
                     "inputs": [
@@ -209,12 +210,66 @@
             ],
             '0x023C5Bba6CAD27855F9cAADFdC845776395F80c4'
         );
+        boxContract =  new web3.eth.Contract([
+                {
+                    "inputs": [],
+                    "name": "finalize",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "key",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "data",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "save",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "dataMap",
+                    "outputs": [
+                        {
+                            "internalType": "address",
+                            "name": "owner",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "data",
+                            "type": "string"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ],
+            '0x589C98e28709979AA05E6373803DbE535fdFF026'
+        );
     }
 
     async function load() {
         await loadWeb3()
         await loadContract()
         await loadMyAddress()
+        await listenMessages()
         await loadMessages()
         await listenEnterKey()
     }
@@ -230,11 +285,11 @@
     }
 
     async function getMessage(index) {
-        return await contract.methods.messages(index).call()
+        return await chatContract.methods.messages(index).call()
     }
 
     async function loadLastMessages(count) {
-        let length = await contract.methods.length().call()
+        let length = await chatContract.methods.length().call()
         for (i = Math.max(0, length - count); i < length; i++) {
             let message = await getMessage(i)
             addMessage(message)
@@ -244,21 +299,20 @@
 
     async function submitMessage(message) {
         let accounts = await window.web3.eth.getAccounts()
-        await window.contract.methods.sendMessage(message).send({from: accounts[0]})
+        await chatContract.methods.sendMessage(message).send({from: accounts[0]})
     }
 
     async function loadMessages() {
-        await listenMessages()
         await loadLastMessages(MESSAGES_MAX_COUNT);
         setLoadingVisibility("hidden")
     }
 
-    function addMessage(message) {
+    async function addMessage(message) {
         messages.push(message)
         while (messages.size > MESSAGES_MAX_COUNT) {
             messages.shift()
         }
-        showMessages(messages)
+        await showMessages(messages)
     }
 
     function listenEnterKey() {
@@ -270,7 +324,7 @@
     }
 
     async function listenMessages() {
-        contract.events.MessageSent({})
+        chatContract.events.MessageSent({})
             .on('data', async function(event){
                 let message = event.returnValues
                 console.log(message)
@@ -292,20 +346,57 @@
         }
     }
 
-    function showMessages(messages) {
+    async function showMessages(messages) {
         let messagesContainer = document.getElementById("messages")
         while (messagesContainer.firstChild) {
             messagesContainer.firstChild.remove()
         }
         messages.forEach(function (message) {
-            let nameLink = document.createElement('a');
-            nameLink.setAttribute('href',"https://ropsten.etherscan.io/address/" + message.sender);
-            nameLink.setAttribute('target',"_blank");
-            nameLink.innerText = message.sender + ": "
-            messagesContainer.appendChild(nameLink)
-            messagesContainer.appendChild(document.createTextNode(message.text))
-            messagesContainer.appendChild(document.createElement('br'))
+            messagesContainer.appendChild(createNameLinkElement(message.sender))
+            determineMessageType(message.text, function (text) {
+                messagesContainer.appendChild(createTextElement(text))
+            }, async function (imageKey) {
+                messagesContainer.appendChild(createImgElement(await loadImage(imageKey)))
+            })
+            messagesContainer.appendChild(createLineBreak())
         })
+    }
+
+    async function loadImage(key) {
+        let result = await boxContract.methods.dataMap(key).call()
+        return result.data
+    }
+
+    function createImgElement(data) {
+        let image = document.createElement('img')
+        image.setAttribute('src', data)
+        return image
+    }
+
+    function createTextElement(text) {
+        return document.createTextNode(text)
+    }
+
+    function createNameLinkElement(address) {
+        let nameLink = document.createElement('a');
+        nameLink.setAttribute('href',"https://ropsten.etherscan.io/address/" + address);
+        nameLink.setAttribute('target',"_blank");
+        nameLink.innerText = address + ": "
+        return nameLink
+    }
+
+    function createLineBreak() {
+        return document.createElement('br')
+    }
+
+    const MESSAGE_PREFIX_IMG = "img:"
+
+    function determineMessageType(message, isText, isImage) {
+        if (message.startsWith(MESSAGE_PREFIX_IMG)) {
+            isImage(message.substring(MESSAGE_PREFIX_IMG.length))
+        } else {
+            isText(message)
+        }
     }
 
     function hideLoading() {
