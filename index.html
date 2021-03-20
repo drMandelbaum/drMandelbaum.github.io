@@ -124,6 +124,7 @@
     var eth;
     var chatContract;
     var boxContract;
+    let dataCache = new Map()
 
     async function loadWeb3() {
         web3 = new Web3(window.ethereum);
@@ -356,14 +357,24 @@
             await determineMessageType(message.text, async function (text) {
                 messagesContainer.appendChild(createTextElement(text))
             }, async function (imageKey) {
-                messagesContainer.appendChild(createImgElement(await loadImage(imageKey)))
+                messagesContainer.appendChild(createImgElement(await getImage(imageKey)))
             })
             messagesContainer.appendChild(createLineBreak())
         }
     }
 
+    async function getImage(key) {
+        if (key in dataCache) {
+            return dataCache[key]
+        } else {
+            return loadImage(key)
+        }
+    }
+
     async function loadImage(key) {
         let result = await boxContract.methods.dataMap(key).call()
+        console.log(result)
+        dataCache[key] = result.data
         return result.data
     }
 
