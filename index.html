@@ -357,21 +357,23 @@
             await determineMessageType(message.text, async function (text) {
                 messagesContainer.appendChild(createTextElement(text))
             }, async function (imageKey) {
-                messagesContainer.appendChild(createImgElement(await getImage(imageKey)))
+                messagesContainer.appendChild(createImgElement(await getData(imageKey)))
+            }, async function (audioKey) {
+                messagesContainer.appendChild(createAudioElement(await getData(audioKey)))
             })
             messagesContainer.appendChild(createLineBreak())
         }
     }
 
-    async function getImage(key) {
+    async function getData(key) {
         if (key in dataCache) {
             return dataCache[key]
         } else {
-            return loadImage(key)
+            return loadData(key)
         }
     }
 
-    async function loadImage(key) {
+    async function loadData(key) {
         let result = await boxContract.methods.dataMap(key).call()
         console.log(result)
         dataCache[key] = result.data
@@ -382,6 +384,14 @@
         let image = document.createElement('img')
         image.setAttribute('src', data)
         return image
+    }
+
+    function createAudioElement(data) {
+        let audio = document.createElement('audio')
+        audio.setAttribute('src', data)
+        audio.autoplay = true
+        audio.controls = true
+        return audio
     }
 
     function createTextElement(text) {
@@ -401,10 +411,13 @@
     }
 
     const MESSAGE_PREFIX_IMG = "img:"
+    const MESSAGE_PREFIX_AUDIO = "play:"
 
-    async function determineMessageType(message, isText, isImage) {
+    async function determineMessageType(message, isText, isImage, isAudio) {
         if (message.startsWith(MESSAGE_PREFIX_IMG)) {
             await isImage(message.substring(MESSAGE_PREFIX_IMG.length))
+        } else if (message.startsWith(MESSAGE_PREFIX_AUDIO)) {
+            await isAudio(message.substring(MESSAGE_PREFIX_AUDIO.length))
         } else {
             await isText(message)
         }
