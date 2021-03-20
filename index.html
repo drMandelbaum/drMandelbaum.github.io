@@ -46,6 +46,22 @@
             font-weight: lighter;
 
         }
+        #my_dogz_balance {
+            font-weight: bold;
+            color: #111;
+            font-size: 24px;
+            width: fit-content;
+            padding: 8px;
+            border-color: white;
+            border-style: dashed;
+        }
+        #my_dogz_balance:hover {
+            background: white;
+        }
+        #balance_container {
+            margin-top: 16px;
+            color: #222;
+        }
         #my_address {
             display: inline-flex;
             background: midnightblue;
@@ -116,6 +132,11 @@
 <div id="my_address"></div>
 <input type="text" id="text_input" size="50">
 <button type="button" id="send_button" onclick="sendMessage()">send</button>
+<br>
+<div id="balance_container" >
+    <a href="https://ropsten.etherscan.io/address/0xa66a2C21c2464C2bd5562e0b8f2D9D6c13C75558" target="_blank">DOGZ:</a>
+    <div id="my_dogz_balance" onclick="updateDogzBalance()"></div>
+</div>
 
 <script type="text/javascript">
 
@@ -124,6 +145,7 @@
     var eth;
     var chatContract;
     var boxContract;
+    var dogzContract;
     let dataCache = new Map()
 
     async function loadWeb3() {
@@ -209,7 +231,7 @@
                     "type": "function"
                 }
             ],
-            '0x4A62785EC4f68262b7F8E19aA9fb63B592261E57'
+            '0x09e38646090d715C9b23Ec90cbc1eD4D16C725c1'
         );
         boxContract =  new web3.eth.Contract([
                 {
@@ -264,6 +286,29 @@
             ],
             '0x589C98e28709979AA05E6373803DbE535fdFF026'
         );
+        dogzContract =  new web3.eth.Contract([
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "tokenOwner",
+                            "type": "address"
+                        }
+                    ],
+                    "name": "balanceOf",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ],
+            '0xa66a2C21c2464C2bd5562e0b8f2D9D6c13C75558'
+        );
     }
 
     async function load() {
@@ -273,16 +318,27 @@
         await listenMessages()
         await loadMessages()
         await listenEnterKey()
+        updateDogzBalance()
+    }
+
+    async function getMyAddress() {
+        let accounts = await window.web3.eth.getAccounts()
+        return accounts[0]
     }
 
     async function loadMyAddress() {
-        let accounts = await window.web3.eth.getAccounts()
-        let address = accounts[0]
+        let address = await getMyAddress()
         let nameLink = document.createElement('a')
         nameLink.setAttribute('href',"https://ropsten.etherscan.io/address/" + address)
         nameLink.setAttribute('target',"_blank")
         nameLink.textContent = address
         document.getElementById("my_address").appendChild(nameLink)
+    }
+
+    async function updateDogzBalance() {
+        let balance = await dogzContract.methods.balanceOf(await getMyAddress()).call()
+        document.getElementById("my_dogz_balance").textContent = String(balance / 100)
+        console.log(balance)
     }
 
     async function getMessage(index) {
@@ -340,6 +396,7 @@
         try {
             await submitMessage(message)
             document.getElementById("text_input").value = ""
+            updateDogzBalance()
         }
         catch(error) {
         } finally {
