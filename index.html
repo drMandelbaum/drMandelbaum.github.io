@@ -208,7 +208,7 @@
                     "type": "function"
                 }
             ],
-            '0x023C5Bba6CAD27855F9cAADFdC845776395F80c4'
+            '0x4A62785EC4f68262b7F8E19aA9fb63B592261E57'
         );
         boxContract =  new web3.eth.Contract([
                 {
@@ -292,7 +292,7 @@
         let length = await chatContract.methods.length().call()
         for (i = Math.max(0, length - count); i < length; i++) {
             let message = await getMessage(i)
-            addMessage(message)
+            await addMessage(message)
             console.log(message)
         }
     }
@@ -351,15 +351,15 @@
         while (messagesContainer.firstChild) {
             messagesContainer.firstChild.remove()
         }
-        messages.forEach(function (message) {
+        for (const message of messages) {
             messagesContainer.appendChild(createNameLinkElement(message.sender))
-            determineMessageType(message.text, function (text) {
+            await determineMessageType(message.text, async function (text) {
                 messagesContainer.appendChild(createTextElement(text))
             }, async function (imageKey) {
                 messagesContainer.appendChild(createImgElement(await loadImage(imageKey)))
             })
             messagesContainer.appendChild(createLineBreak())
-        })
+        }
     }
 
     async function loadImage(key) {
@@ -391,11 +391,11 @@
 
     const MESSAGE_PREFIX_IMG = "img:"
 
-    function determineMessageType(message, isText, isImage) {
+    async function determineMessageType(message, isText, isImage) {
         if (message.startsWith(MESSAGE_PREFIX_IMG)) {
-            isImage(message.substring(MESSAGE_PREFIX_IMG.length))
+            await isImage(message.substring(MESSAGE_PREFIX_IMG.length))
         } else {
-            isText(message)
+            await isText(message)
         }
     }
 
