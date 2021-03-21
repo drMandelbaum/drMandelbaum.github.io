@@ -4,8 +4,12 @@ var web3;
 async function initPlateLib() {
     await loadScript("./blockies.min.js").then()
     await loadScript("./web3.min.js")
-    await loadScript("./plate.js")
     await loadWeb3()
+
+    await loadScript("./plate.js")
+    await loadScript("./selector.js")
+    await loadScript("./press.js")
+
     onPlateLibInitialized()
 }
 

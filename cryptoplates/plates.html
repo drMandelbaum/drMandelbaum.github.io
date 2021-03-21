@@ -10,7 +10,7 @@
 
     <style>
 
-        #test_holder {
+        #plates {
             padding: 40px;
         }
 
@@ -22,13 +22,16 @@
 
 <img src="./cryptoplates.png">
 <br>
-<div id="test_holder"></div>
+<div id="plates"></div>
 
 
 <script type="text/javascript">
 
     async function onPlateLibInitialized() {
-        document.getElementById("test_holder").appendChild(await renderPlate("0x92F04f19f4e1971D3525B7eD7AA5Ca58CC6480e8"))
+        let myPlates = await selectorContract.methods.collectionOf(await firstAccount()).call()
+        for (i = 0; i < myPlates.length; i++) {
+            document.getElementById("plates").appendChild(await renderPlate(myPlates[i]))
+        }
     }
 
 </script>

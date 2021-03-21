@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CryptoPlates</title>
+
+    <link rel="stylesheet" href="./plate.css">
+    <script src="cryptoplateslib.js" onload="initPlateLib()"></script>
+
+    <style>
+
+        #plates {
+            padding: 40px;
+        }
+
+        #press {
+            padding: 40px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<img src="./cryptoplates.png">
+
+<div id="press" >
+    <p>name:</p>
+    <input type="text" id="name_input" size="80">
+    <br>
+
+    <p>quantity:</p>
+    <input type="text" id="input_quantity" size="80">
+    <br>
+
+    <p>data:</p>
+    <input type="text" id="input_data" size="80">
+    <br>
+
+    <br>
+    <button type="button" id="press_button" onclick="onPressClicked()">PRESS</button>
+</div>
+
+
+<div id="plates"></div>
+
+<script type="text/javascript">
+
+    async function onPressClicked() {
+        let plate = await pressContract.methods.press(
+            document.getElementById("input_quantity").value,
+            document.getElementById("name_input").value,
+            document.getElementById("input_data").value,
+        ).send({ from: await firstAccount()})
+        console.log(plate)
+    }
+
+</script>
+
+</body>
+</html>
