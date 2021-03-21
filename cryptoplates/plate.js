@@ -328,7 +328,7 @@ async function renderPlate(address) {
 
     let pressedAtParagraph = document.createElement("p")
     pressedAtParagraph.setAttribute("class", "plate_pressed_at")
-    pressedAtParagraph.textContent = "pressed at " + pressedAt;
+    pressedAtParagraph.textContent = "pressed at " + new Date(pressedAt * 1000).toLocaleString()
 
     infoElement.appendChild(plateIcon)
     infoElement.appendChild(nameParagraph)

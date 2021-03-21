@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>CryptoPlates</title>
+    <title>CryptoPlates - Press</title>
 
     <link rel="stylesheet" href="./plate.css">
     <script src="cryptoplateslib.js" onload="initPlateLib()"></script>
@@ -53,7 +53,9 @@
             document.getElementById("input_quantity").value,
             document.getElementById("name_input").value,
             document.getElementById("input_data").value,
-        ).send({ from: await firstAccount()})
+        ).send({ from: await firstAccount()}, async function(err, res){
+            console.log(res)
+        })
         console.log(plate)
     }
 
