@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap');
+
+.plate {
+    font-family: 'Syne Mono', monospace;
+    width: 1000px;
+    background: #802600;
+
+}
+
+.plate_info {
+    height: 100px;
+}
+
+.plate_icon {
+    position: absolute;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+.plate_name {
+    font-size: xx-large;
+    position: absolute;
+    margin-left: 102px;
+    margin-top: 8px;
+    color: white;
+}
+
+.plate_address {
+    font-size: larger;
+    position: absolute;
+    margin-left: 102px;
+    margin-top: 44px;
+    color: white;
+}
+
+.plate_address:hover {
+    background: white;
+    color: black;
+}
+
+.plate_pressed_at {
+    font-size: larger;
+    position: absolute;
+    margin-left: 102px;
+    margin-top: 64px;
+    color: lightsalmon;
+}
+
+.plate_pressed_by {
+    height: 60px;
+}
+
+.plate_pressed_by_icon {
+    position: absolute;
+    margin-top: 0px;
+    margin-left: 8px;
+}
+
+.plate_pressed_by_label {
+    font-size: medium;
+    position: absolute;
+    margin-left: 68px;
+    margin-top: 4px;
+    color: lightsalmon;
+}
+
+.plate_pressed_by_address {
+    font-size: large;
+    position: absolute;
+    margin-left: 68px;
+    margin-top: 20px;
+    color: white;
+}
+
+.plate_pressed_by_address:hover {
+    background: white;
+    color: black;
+}
