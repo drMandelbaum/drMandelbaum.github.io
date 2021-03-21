@@ -18,7 +18,26 @@ let selectorContract = new web3.eth.Contract([
                 "type": "address"
             }
         ],
-        "name": "collectionOf",
+        "name": "filterOwnedBy",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "",
+                "type": "address[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "pressedBy",
+                "type": "address"
+            }
+        ],
+        "name": "filterPressedBy",
         "outputs": [
             {
                 "internalType": "address[]",
@@ -29,4 +48,4 @@ let selectorContract = new web3.eth.Contract([
         "stateMutability": "view",
         "type": "function"
     }
-], "0x89110355bA28e64A5C6239d56b9593772725814b")
+], "0xC7f079296396A97a37923C0B490da6E66779e475")

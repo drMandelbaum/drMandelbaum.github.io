@@ -322,7 +322,7 @@ async function renderPlate(address) {
 
     let plateAddressParagraph = document.createElement("a")
     plateAddressParagraph.setAttribute("class", "plate_address")
-    plateAddressParagraph.setAttribute("href", "https://ropsten.etherscan.io/address/" + address)
+    plateAddressParagraph.setAttribute("href", "?plate=" + address)
     plateAddressParagraph.setAttribute("target", "blank")
     plateAddressParagraph.textContent = address
 
@@ -355,7 +355,7 @@ async function renderPlate(address) {
 
     let pressedByAddressParagraph = document.createElement("a")
     pressedByAddressParagraph.setAttribute("class", "plate_pressed_by_address")
-    pressedByAddressParagraph.setAttribute("href", "https://ropsten.etherscan.io/address/" + pressedBy)
+    pressedByAddressParagraph.setAttribute("href", "?pressedBy=" + pressedBy)
     pressedByAddressParagraph.setAttribute("target", "blank")
     pressedByAddressParagraph.textContent = pressedBy;
 

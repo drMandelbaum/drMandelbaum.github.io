@@ -14,23 +14,64 @@
             padding: 40px;
         }
 
+        #logo:hover {
+            opacity: 80%;
+        }
+
     </style>
 
 </head>
 
 <body>
+<a href="?">
+    <img src="./logo.png" id="logo">
+</a>
 
-<img src="./logo.png">
 <br>
 <div id="plates"></div>
-
+<div id="ownedBy"></div>
 
 <script type="text/javascript">
 
     async function onPlateLibInitialized() {
-        let myPlates = await selectorContract.methods.collectionOf(await firstAccount()).call()
-        for (i = 0; i < myPlates.length; i++) {
-            document.getElementById("plates").appendChild(await renderPlate(myPlates[i]))
+
+        let url = new URL(window.location.href);
+        if (url.searchParams.has("owner")) {
+            await showPlatesOwnedBy(url.searchParams.get("owner"))
+        } if (url.searchParams.has("plate")) {
+            await showPlate(url.searchParams.get("plate"))
+        } else  if (url.searchParams.has("pressedBy")) {
+            await showPlatesPressedBy(url.searchParams.get("pressedBy"))
+        } else {
+            await showPlatesOwnedBy(await firstAccount())
+        }
+    }
+
+    async function showPlatesOwnedBy(address) {
+        let plates = await selectorContract.methods.filterOwnedBy(address).call()
+        for (i = 0; i < plates.length; i++) {
+            document.getElementById("plates").appendChild(await renderPlate(plates[i]))
+        }
+    }
+
+    async function showPlatesPressedBy(address) {
+        let plates = await selectorContract.methods.filterPressedBy(address).call()
+        for (i = 0; i < plates.length; i++) {
+            document.getElementById("plates").appendChild(await renderPlate(plates[i]))
+        }
+    }
+
+    async function showPlate(address) {
+        document.getElementById("plates").appendChild(await renderPlate(address))
+    }
+
+    async function showOwnedByList(address) {
+        let plates = await selectorContract.methods.filterOwnedBy(address).call()
+        for (i = 0; i < plates.length; i++) {
+
+
+
+            document.getElementById("ownedBy").appendChild(await renderPlate(plates[i]))
         }
     }
 
