@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&family=Libre+Franklin&family=Source+Code+Pro&display=swap');
+
+.profile_item {
+    font-family: 'Source Code Pro', monospace;
+    width: 700px;
+    background: rebeccapurple;
+    margin-bottom: 10px;
+    border: outset purple 4px;
+    display: inline-block;
+    margin-right: 50px;
+    height: 64px;
+}
+
+.profile_icon {
+    position: absolute;
+    margin-top: 8px;
+    margin-left: 8px;
+    border: outset white 4px;
+}
+
+.profile_address {
+    font-size: large;
+    position: absolute;
+    margin-left: 80px;
+    margin-top: 8px;
+    color: white;
+}
+
+.profile_address:hover {
+    background: white;
+    color: black;
+}

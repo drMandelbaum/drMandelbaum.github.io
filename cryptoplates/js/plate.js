@@ -375,28 +375,3 @@ async function renderPlate(address) {
     mainElement.appendChild(dataElement)
     return mainElement
 }
-
-
-
-async function loadImage(key) {
-    let result = await contract.methods.dataMap(key).call()
-    let imagesContainer = document.getElementById("images")
-    let image = document.createElement('img')
-    image.setAttribute('src',result.data)
-    imagesContainer.appendChild(image)
-}
-
-async function saveData(key, data) {
-    await contract.methods.save(key, data).send({from: await firstAccount()})
-}
-
-async function onLoadClicked() {
-    await loadImage(document.getElementById("key_input").value)
-}
-
-async function onSaveClicked() {
-    await saveData(
-        document.getElementById("key_input").value,
-        document.getElementById("data_input").value
-    )
-}

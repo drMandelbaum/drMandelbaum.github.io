@@ -10,6 +10,7 @@ async function initPlateLib() {
     await loadScript("./js/plate.js")
     await loadScript("./js/selector.js")
     await loadScript("./js/press.js")
+    await loadScript("./js/profile.js")
 
     onPlateLibInitialized()
 }
