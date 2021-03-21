@@ -3,8 +3,11 @@
 .plate {
     font-family: 'Syne Mono', monospace;
     width: 1000px;
-    background: #802600;
+    background: #FC6D00;
     margin-bottom: 50px;
+    border: outset #C02700 25px;
+    display: inline-block;
+    margin-right: 50px;
 }
 
 .plate_info {
@@ -43,7 +46,7 @@
     position: absolute;
     margin-left: 102px;
     margin-top: 64px;
-    color: lightsalmon;
+    color: #FCC700;
 }
 
 .plate_pressed_by {
@@ -61,7 +64,7 @@
     position: absolute;
     margin-left: 68px;
     margin-top: 4px;
-    color: lightsalmon;
+    color: #FCC700;
 }
 
 .plate_pressed_by_address {

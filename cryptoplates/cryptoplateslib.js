@@ -2,13 +2,14 @@
 var web3;
 
 async function initPlateLib() {
-    await loadScript("./blockies.min.js").then()
-    await loadScript("./web3.min.js")
+    await loadScript("./lib/blockies.min.js").then()
+    await loadScript("./lib/web3.min.js")
+
     await loadWeb3()
 
-    await loadScript("./plate.js")
-    await loadScript("./selector.js")
-    await loadScript("./press.js")
+    await loadScript("./js/plate.js")
+    await loadScript("./js/selector.js")
+    await loadScript("./js/press.js")
 
     onPlateLibInitialized()
 }
@@ -33,5 +34,4 @@ async function loadWeb3() {
     web3 = new Web3(window.ethereum);
     window.ethereum.enable();
 }
-
 
